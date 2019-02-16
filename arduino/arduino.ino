@@ -25,8 +25,8 @@ void setup() {
 	pinMode(PUSHER_BRAKE_PIN, OUTPUT);
 	pinMode(FLYWHEEL_MOTOR_PIN, OUTPUT);
 
-	Wire.begin(SLAVE_ADDRESS);
-	Wire.onReceive(receiveI2CData);
+	// Wire.begin(SLAVE_ADDRESS);
+	// Wire.onReceive(receiveI2CData);
 }
 
 void loop() {
@@ -34,11 +34,11 @@ void loop() {
 }
 
 
-void receiveI2CData () {
-	while (Wire.available()) {
-    int reading = Wire.read();
-    Serial.print("data received: ");
-    Serial.println(reading);
+// void receiveI2CData () {
+// 	while (Wire.available()) {
+//     int reading = Wire.read();
+//     Serial.print("data received: ");
+//     Serial.println(reading);
 
-  }
-}
+//   }
+// }
