@@ -26,8 +26,8 @@
 Button triggerBtn (PUSHER_RETURN_SWICH_PIN, PULLUP, INVERT, DEBOUNCE_MS);
 
 uint8_t pusherPow, flywheelPow;
-
 uint8_t commandType;	// buffer to indicate commandson which motor controls to complete
+uint8_t timesToRead;	// keep track of how many times to read serial before resetting command type
 
 void setup() {
 	Serial.begin(9600);
@@ -47,27 +47,40 @@ void loop() {
 void readSerial() {
 	if (Serial.available() > 0) {
     char reading = Serial.read();
+    int intReading = reading -'0';
 
     // set type of command
     if (commandType == 0) {
-    	commandType = reading -'0';
-  		Serial.print("Command: " + (String)commandType);
-    } else {
-    	if (command == ROTATE_LEFT) {
-    		
-    	} else if (command == ROTATE_RIGHT) {
+    	commandType = intReading;
+  		Serial.println("Command: " + (String)commandType);
+  		return;
+  	}
+  		
+		if (commandType == ROTATE_LEFT) {
+			Serial.println("Rotating left!");
+			commandType = 0;
+  	} else if (commandType == ROTATE_RIGHT) {
+  		Serial.println("Rotating right!");
+  		commandType = 0;
+  	} else if (commandType == ROTATE_UP) {
+  		Serial.println("Rotating up!");
+  		commandType = 0;
+  	} else if (commandType == ROTATE_DOWN) {
+  		Serial.println("Rotating down!");
+  		commandType = 0;
+  	} else if (commandType == SHOOT) {
+  		Serial.println("Shooting!");
+  		if (!pusherPow) {
+  			pusherPow = intReading;
+  			return;
+  		} 
 
-    	} else if (command == ROTATE_UP) {
+  		flywheelPow = intReading;
 
-    	} else if (command == ROTATE_DOWN) {
-
-    	} else if (command == SHOOT) {
-
-    	}
+  		commandType = 0;
+  	}
 
 
-    	commandType = 0;
-    }
   }
 }
 
