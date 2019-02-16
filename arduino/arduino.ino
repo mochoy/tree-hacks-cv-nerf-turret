@@ -30,9 +30,18 @@ void setup() {
 }
 
 void loop() {
-
+	readSerial();
 }
 
+void readSerial() {
+	if (Serial.available() > 0) {
+    int incomingByte = Serial.read();
+
+    // say what you got:
+    Serial.print("I received: ");
+    Serial.println(incomingByte, DEC);
+  }
+}
 
 // void receiveI2CData () {
 // 	while (Wire.available()) {
