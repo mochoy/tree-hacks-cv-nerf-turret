@@ -1,10 +1,11 @@
 import subprocess as sp
 import os
+import serial
 
-coords = {
-    'x' : 0,
-    'y' : 0
-}
+#TODO PATHTOARDUINO from RPI
+ser = serial.Serial(PATHTOARDUINO, 9600)
+data = ''
+prevCmd = 0
 
 class cmds:
     adb = 'adb'
@@ -25,18 +26,29 @@ try:
     if 'unauthorized' in out.split('\t')[1]: #device status
         print('WARNING: DEVICE UNAUTHORIZED')
     print('Found device:\n' + device)
-except:
+except:lo
     print('No connected devices')
+    raise
 
-sp.check_output([cmds.adb, cmds.pull, '-a', cmds.phone_path, cmds.rpi_path]) #pull openCV
-sp.check_output([cmds.sudo, cmds.chmod, '-R', '0777', cmds.rpi_path]) #allow read & write
+while(true) {
+    sp.check_output([cmds.adb, cmds.pull, '-a', cmds.phone_path, cmds.rpi_path]) #pull openCV
+    sp.check_output([cmds.sudo, cmds.chmod, '-R', '0777', cmds.rpi_path]) #allow read & write
 
-with open(cmds.rpi_path + '/NerfVision/example.txt', 'r') as datafile:
-    data = datafile.read()
+    with open(cmds.rpi_path + '/NerfVision/data.txt', 'r') as datafile:
+        data = datafile.read()
 
-#Process data and split into x and y
-processed_data = data.split('\n')
-coords['x'] = processed_data[0].split(' ')[-1]
-coords['y'] = processed_data[1].split(' ')[-1]
+    #Process data
+    processed_data = data.split('\n')
+    try:
+        newestCmd = processed_data[-1]
+    except Exception:
+        pass
 
-#TODO: Send data to Arduino
+    #Check if latest command is different from previously sent command
+    if newestCmd != prevCmd:
+        print('New command: ' + newestCmd)
+        ser.write(newestCmd.encode)
+        ser.flush()
+}
+
+#facialrecogapp
