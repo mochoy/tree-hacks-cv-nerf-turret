@@ -10,7 +10,7 @@ class cmds:
     adb = 'adb'
     devices = 'devices'
     logcat = 'logcat'
-    tag = 'TARGETTING'
+    tag = 'TARGETTING\n'
 
 sp.check_output([cmds.adb, 'start-server'])
 
@@ -26,20 +26,50 @@ except:
     raise
 
 #Check for targeting tag; BROKEN, while is sending too many commands
-while(True)
-    #Log from adb only outputs with tags labelled TARGETTING
-    print('Reached here')
-    #print sp.check_output([cmds.adb, cmds.logcat, '-s', 'TARGETTING '])
-    commands = [cmds.adb, cmds.logcat, '-s']
+
+#Log from adb only outputs with tags labelled TARGETTING
+print('Reached here')
+#print sp.check_output([cmds.adb, cmds.logcat, '-s', 'TARGETTING '])
+
+#print output.communicate()
+'''
+def execute(cmds):
     output = sp.Popen(commands, stdin=sp.PIPE)
     output.stdin.write(cmds.tag, shell=False)
+    
+    for stdout_line in iter(output.stdout.readline, ""):
+        yield stdout_line
     output.close()
-    print output.communicate()
-    try:
-        newVal = output.split(' ')[-1]
-    except:
-        print('Invalid format for targetting')
-        pass
-    print('Sending to arduino: ' + newVal)
-    #ser.write(newVal.encode)
-    #ser.flush()
+    output.communicate()
+    output.wait()
+'''
+'''
+commands = [cmds.adb, cmds.logcat, '-s']
+for path in execute(commands):
+    print path
+'''
+
+def execute(cmd):
+    popen = sp.Popen(cmd, stdout=sp.PIPE, universal_newlines=True)
+    popen.communicate(input=cmds.tag)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line 
+    #popen.stdin.write(cmds.tag, shell=False)
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
+
+# Example
+for path in execute([cmds.adb, cmds.logcat, '-s', cmds.tag]):
+    print path
+'''
+try:
+    newVal = output.split(' ')[-1]
+except:
+    print('Invalid format for targetting')
+    pass
+print('Sending to arduino: ' + newVal)
+#ser.write(newVal.encode)
+#ser.flush()
+'''
