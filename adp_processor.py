@@ -1,21 +1,16 @@
 import subprocess as sp
 import os
-import serial
+#import serial #NO MODULE NAMED SERIAL
 
 #TODO PATHTOARDUINO from RPI
-ser = serial.Serial(PATHTOARDUINO, 9600)
-data = ''
-prevCmd = 0
+#ser = serial.Serial(PATHTOARDUINO, 9600)
+newVal = ''
 
 class cmds:
     adb = 'adb'
-    chmod = 'chmod'
     devices = 'devices'
-    shell = 'shell'
-    sudo = 'sudo'
-    pull = 'pull'
-    phone_path = '/storage/sdcard0/NerfVision'
-    rpi_path = '/home/ray/sharedfolder'
+    logcat = 'logcat'
+    tag = 'TARGETTING'
 
 sp.check_output([cmds.adb, 'start-server'])
 
@@ -26,29 +21,25 @@ try:
     if 'unauthorized' in out.split('\t')[1]: #device status
         print('WARNING: DEVICE UNAUTHORIZED')
     print('Found device:\n' + device)
-except:lo
+except:
     print('No connected devices')
     raise
 
-while(true) {
-    sp.check_output([cmds.adb, cmds.pull, '-a', cmds.phone_path, cmds.rpi_path]) #pull openCV
-    sp.check_output([cmds.sudo, cmds.chmod, '-R', '0777', cmds.rpi_path]) #allow read & write
-
-    with open(cmds.rpi_path + '/NerfVision/data.txt', 'r') as datafile:
-        data = datafile.read()
-
-    #Process data
-    processed_data = data.split('\n')
+#Check for targeting tag; BROKEN, while is sending too many commands
+while(True)
+    #Log from adb only outputs with tags labelled TARGETTING
+    print('Reached here')
+    #print sp.check_output([cmds.adb, cmds.logcat, '-s', 'TARGETTING '])
+    commands = [cmds.adb, cmds.logcat, '-s']
+    output = sp.Popen(commands, stdin=sp.PIPE)
+    output.stdin.write(cmds.tag, shell=False)
+    output.close()
+    print output.communicate()
     try:
-        newestCmd = processed_data[-1]
-    except Exception:
+        newVal = output.split(' ')[-1]
+    except:
+        print('Invalid format for targetting')
         pass
-
-    #Check if latest command is different from previously sent command
-    if newestCmd != prevCmd:
-        print('New command: ' + newestCmd)
-        ser.write(newestCmd.encode)
-        ser.flush()
-}
-
-#facialrecogapp
+    print('Sending to arduino: ' + newVal)
+    #ser.write(newVal.encode)
+    #ser.flush()
