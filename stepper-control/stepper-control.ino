@@ -10,15 +10,15 @@ void setup() {
 	Serial.begin(9600);
   // Serial.println("Stepper test!");
   // set the speed of the motor to 30 RPMs
-  stepper.setSpeed(60);
+  stepper.setSpeed(4);
 }
 
 void loop() {
-	stepperRight(500);
+	stepperRight(40);
 	// Serial.println("fads");
-	delay(500);
-	stepperLeft(500);
-	delay(500);
+	delay(1500);
+	stepperLeft(40);
+	delay(1500);
 }
 
 void stepperRight(int steps) {
