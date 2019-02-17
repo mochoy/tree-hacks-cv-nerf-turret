@@ -4,8 +4,6 @@
 // COmmand codes
 #define ROTATE_LEFT 1
 #define ROTATE_RIGHT 2
-#define ROTATE_UP 3
-#define ROTATE_DOWN 4
 #define SHOOT 5
 
 #define SLAVE_ADDRESS 0x04
@@ -61,12 +59,6 @@ void readSerial() {
 			commandType = 0;
   	} else if (commandType == ROTATE_RIGHT) {
   		Serial.println("Rotating right!");
-  		commandType = 0;
-  	} else if (commandType == ROTATE_UP) {
-  		Serial.println("Rotating up!");
-  		commandType = 0;
-  	} else if (commandType == ROTATE_DOWN) {
-  		Serial.println("Rotating down!");
   		commandType = 0;
   	} else if (commandType == SHOOT) {
   		Serial.println("Shooting!");
