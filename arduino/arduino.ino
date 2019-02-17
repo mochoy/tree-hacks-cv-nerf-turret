@@ -96,12 +96,12 @@ void rotate(int stepsToRotate) {
 void shoot() {
 	Serial.print("shooting");
 
-	digitalWrite(PUSHER_MOTOR_PIN, HIGH);
+	digitalWrite(FLYWHEEL_MOTOR_PIN, HIGH);
 	delay(FLYWHEEL_ACCEL_DELAY);
 	digitalWrite(PUSHER_MOTOR_PIN, HIGH);
 	delay(FIRE_DELAY);
 
-	digitalWrite(PUSHER_MOTOR_PIN, LOW);
+	digitalWrite(FLYWHEEL_MOTOR_PIN, LOW);
 	digitalWrite(PUSHER_MOTOR_PIN, LOW);
 
 	Serial.println("finished\n\n");
