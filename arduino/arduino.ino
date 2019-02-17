@@ -30,6 +30,11 @@ void setup() {
 }
 
 void loop() {
+	clearBuffer();
+	readSerial();
+}
+
+void clearBuffer () {
 	if (toClearSerialBuffer) {
 		if (Serial.available() > 0) {
 			Serial.println("clearing");
@@ -41,8 +46,6 @@ void loop() {
 
 		toClearSerialBuffer = false;
 	} 
-
-	readSerial();
 }
 
 void readSerial() {
@@ -74,6 +77,12 @@ void readSerial() {
 
 		//appending to command
 		command += reading;
+
+		//make sure command buffer never gets too big
+		if (command.toInt() > 600 || command.toInt() < -600) {
+			command = "";
+		}
+
 		Serial.println(command);
  
   }
