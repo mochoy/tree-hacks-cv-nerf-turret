@@ -70,7 +70,8 @@ void readSerial() {
 			command = "";
 			Serial.println("resetting");
 
-			rotate(degreesToTurn);
+			degreesToTurn -= 320;
+			rotate(degreesToTurn/24);
 
 			return;
 		} 
@@ -79,7 +80,7 @@ void readSerial() {
 		command += reading;
 
 		//make sure command buffer never gets too big
-		if (command.toInt() > 600 || command.toInt() < -600) {
+		if (command.toInt() > 600 || command.toInt() < 0) {
 			command = "";
 		}
 
